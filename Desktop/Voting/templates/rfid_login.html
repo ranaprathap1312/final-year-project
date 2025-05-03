@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}RFID Login{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8 mt-10">
+    <div class="text-center">
+        <div class="mx-auto w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+            <i class="fas fa-rfid text-4xl text-blue-600"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">RFID Login</h1>
+        <p class="text-gray-600 mb-6">Please scan your RFID card to authenticate</p>
+        
+        <div id="loginStatus" class="mb-8 p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-center">
+                <div class="w-3 h-3 rounded-full bg-gray-400 mr-2" id="rfid-indicator"></div>
+                <span id="rfid-message" class="text-sm">Waiting for RFID scan...</span>
+            </div>
+        </div>
+
+        <div class="border-t pt-4">
+            <p class="text-sm text-gray-500">
+                Don't have an RFID card? 
+                <a href="{{ url_for('password_login') }}" class="text-blue-600 hover:text-blue-800">Login with password instead</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function checkRfidLogin() {
+    fetch("{{ url_for('rfid_login') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const indicator = document.getElementById('rfid-indicator');
+        const message = document.getElementById('rfid-message');
+        
+        if (data.status === 'success') {
+            indicator.className = 'w-3 h-3 rounded-full bg-green-500 mr-2';
+            message.textContent = `Welcome ${data.username}! Redirecting...`;
+            
+            // Redirect to dashboard after successful login
+            setTimeout(() => {
+                window.location.href = "{{ url_for('dashboard') }}";
+            }, 1500);
+        } else {
+            indicator.className = 'w-3 h-3 rounded-full bg-red-500 mr-2';
+            message.textContent = data.message || 'Login failed';
+            
+            // Reset after 3 seconds
+            setTimeout(() => {
+                indicator.className = 'w-3 h-3 rounded-full bg-gray-400 mr-2';
+                message.textContent = 'Waiting for RFID scan...';
+            }, 3000);
+        }
+    })
+    .catch(error => {
+        console.error('Login error:', error);
+        document.getElementById('rfid-message').textContent = 'Error connecting to RFID reader';
+    });
+}
+
+// Check for RFID every 2 seconds
+setInterval(checkRfidLogin, 2000);
+</script>
+{% endblock %}
