@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                <i class="bi bi-graph-up-arrow text-blue-600 mr-2"></i>
+                Voting Results
+            </h1>
+            <p class="text-gray-600">Current vote distribution</p>
+        </div>
+
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-medium text-gray-700">Total Votes:</span>
+                <span class="font-bold text-blue-600">{{ total_votes }}</span>
+            </div>
+            {% for candidate, count in votes.items() %}
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-medium">{{ candidate }}</span>
+                    <span class="text-gray-600">{{ count }} votes ({% if total_votes > 0 %}{{ (count/total_votes*100)|round(1) }}{% else %}0{% endif %}%)</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-blue-600 h-2.5 rounded-full" 
+                         style="width: {% if total_votes > 0 %}{{ (count/total_votes*100) }}{% else %}0{% endif %}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for candidate, count in votes.items() %}
+            <div class="bg-gray-50 p-4 rounded-lg border">
+                <h3 class="font-bold text-lg text-gray-800 mb-2">{{ candidate }}</h3>
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="bi bi-person-fill text-blue-600"></i>
+                    </div>
+                    <span class="text-gray-700">{{ count }} votes</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

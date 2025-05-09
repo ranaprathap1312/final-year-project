@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                <i class="bi bi-person-check-fill text-blue-600 mr-2"></i>
+                Welcome, {{ username }}!
+            </h1>
+            <p class="text-gray-600">Please select your preferred candidate</p>
+        </div>
+
+        <form action="/vote" method="POST" class="space-y-6">
+            <div class="space-y-4">
+                {% for candidate in candidates %}
+                <div class="flex items-center p-4 border rounded-lg hover:bg-gray-50 transition cursor-pointer">
+                    <input type="radio" id="{{ candidate }}" name="candidate" value="{{ candidate }}" 
+                           class="h-5 w-5 text-blue-600 focus:ring-blue-500" required>
+                    <label for="{{ candidate }}" class="ml-3 block text-lg font-medium text-gray-700">
+                        {{ candidate }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                <i class="bi bi-check-circle-fill mr-2"></i> Submit Vote
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

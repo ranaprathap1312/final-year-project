@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden p-8">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                <i class="bi bi-speedometer2 text-blue-600 mr-2"></i>
+                Admin Dashboard
+            </h1>
+            <p class="text-gray-600">Manage voting system</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="bi bi-people-fill text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Total Votes</p>
+                        <p class="font-bold text-xl">{{ total_votes }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="bi bi-person-check-fill text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Voters Registered</p>
+                        <p class="font-bold text-xl">4</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="bi bi-list-check text-purple-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Candidates</p>
+                        <p class="font-bold text-xl">{{ candidates|length }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="bi bi-plus-circle-fill text-blue-600 mr-2"></i>
+                Add New Candidate
+            </h2>
+            <form action="/add_candidate" method="POST" class="flex gap-2">
+                <input type="text" name="new_candidate" required
+                       class="flex-grow px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Candidate name">
+                <button type="submit" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                    <i class="bi bi-plus-lg mr-1"></i> Add
+                </button>
+            </form>
+        </div>
+        <div class="blockchain-section">
+            <h3>Blockchain</h3>
+            <div class="blockchain">
+                {% for block in blockchain %}
+                <div class="block">
+                    <p><strong>Block #{{ block.index }}</strong></p>
+                    <p>Hash: {{ block.hash[:10] }}...{{ block.hash[-10:] }}</p>
+                    <p>Previous: {{ block.previous_hash[:10] }}...{{ block.previous_hash[-10:] }}</p>
+                    <p>Data: {{ block.data }}</p>
+                    <p>Timestamp: {{ block.timestamp }}</p>
+                </div>
+                {% if not loop.last %}
+                <div class="block-arrow">↓</div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="bi bi-bar-chart-fill text-blue-600 mr-2"></i>
+                Current Results
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidate</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Votes</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for candidate, count in votes.items() %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{{ candidate }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ count }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                {% if total_votes > 0 %}{{ (count/total_votes*100)|round(1) }}{% else %}0{% endif %}%
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
